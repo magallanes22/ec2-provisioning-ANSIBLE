@@ -1,0 +1,107 @@
+---
+- name: Installing Git
+  apt: name=git state=present update_cache=yes
+
+- name: Check out latest git's version
+  command: git clone https://avaldes:puto1234@bitbucket.org/springshot/location-service.git
+
+
+- name: Install required packages
+  apt: name={{ item }} state=present update_cache=yes
+  with_items:
+    - gcc-4.6-base
+    - cpp-4.6
+    - libgomp1
+    - libquadmath0
+    - libpq-dev
+    - make
+    - rbenv
+    - redis-server
+    - g++
+    - libpq-dev
+    - libreadline-dev
+    - libtool
+    - bundler
+    - nodejs
+
+- name: Git clone rbenv
+  git: repo=git://github.com/sstephenson/rbenv.git dest=/root/.rbenv 
+
+- name: Git clone ruby builds
+  git: repo=git://github.com/sstephenson/ruby-build.git dest=/root/.rbenv/plugins/ruby-build
+
+- name: Installing rbenv
+  copy: src=rbenv.sh dest=/home/ubuntu/rbenv.sh mode=0777
+
+- name: Installing rbenv
+  shell: /home/ubuntu/rbenv.sh
+
+
+- name: Installing postresql and imagemagick
+  apt: name={{ item }} state=present
+  with_items:
+    - postgresql
+    - postgresql-contrib
+    - php5-imagick
+    - imagemagick
+
+- name: Installing ruby 2.3.0 with Rbenv 
+  command: rbenv install 2.3.0
+
+- name: Installing gems
+  command: gem install bundler
+
+- name: Moving script for bundle install
+  copy: src=gem_install.sh dest=/home/ubuntu mode=0777
+
+- name: Executing gem_install.sh 
+  shell: /home/ubuntu/gem_install.sh
+
+- name: Gem activeadmin
+  command: gem install activeadmin -v '1.0.0.pre1'
+
+- name: Moving script for creating psql roles
+  copy: src=psql.sh dest=/home/ubuntu mode=0777
+
+- name: Executing psql.sh
+  shell: /home/ubuntu/psql.sh
+
+- name: Creating role root
+  command: su postgres -c "psql -c 'CREATE USER root;'"
+
+- name: Granting super user privileges to root 
+  command: su postgres -c "psql -c 'ALTER USER root WITH SUPERUSER;'"
+
+- name: Granting super user privileges to springshot 
+  command: su postgres -c "psql -c 'ALTER USER springshot WITH SUPERUSER;'"
+
+- name: Creating user springshot for Postgresql
+  command: createuser -s springshot
+
+- name: Creating Postgresql structure
+  command: su postgres -c "psql -c 'CREATE DATABASE location_service_dev;'"
+
+- name: Creating Postgresql structure
+  command: su postgres -c "psql -c 'CREATE DATABASE location_service_test;'"
+
+- name: Grating privileges for database #1
+  command: su postgres -c "psql -c 'GRANT ALL PRIVILEGES ON DATABASE location_service_test to springshot'"
+
+- name: Grating privileges for database #2
+  command: su postgres -c "psql -c 'GRANT ALL PRIVILEGES ON DATABASE location_service_dev to springshot'"
+
+- name: Rake #1
+  command: rake db:migrate
+
+- name: Rake #2 
+  command: rake db:seed 
+
+- name: Installing foreman 
+  command: gem install foreman
+
+- name: Starting foreman
+  command: /root/.rbenv/versions/2.3.0/lib/ruby/gems/2.3.0/gems/foreman-0.78.0/bin/foreman start 
+
+
+
+

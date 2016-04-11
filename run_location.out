@@ -1,0 +1,50 @@
+nohup: ignoring input
+
+PLAY ***************************************************************************
+
+TASK [setup] *******************************************************************
+ok: [54.183.89.232]
+
+TASK [location : Installing Git] ***********************************************
+ok: [54.183.89.232]
+
+TASK [location : Check out latest git's version] *******************************
+changed: [54.183.89.232]
+ [WARNING]: Consider using git module rather than running git
+
+TASK [location : Install required packages] ************************************
+changed: [54.183.89.232] => (item=[u'gcc-4.6-base', u'cpp-4.6', u'libgomp1', u'libquadmath0', u'libpq-dev', u'make', u'rbenv', u'redis-server', u'g++', u'libpq-dev', u'libreadline-dev', u'libtool', u'bundler', u'nodejs'])
+
+TASK [location : Git clone rbenv] **********************************************
+changed: [54.183.89.232]
+
+TASK [location : Git clone ruby builds] ****************************************
+changed: [54.183.89.232]
+
+TASK [location : Installing rbenv] *********************************************
+changed: [54.183.89.232]
+
+TASK [location : Installing rbenv] *********************************************
+changed: [54.183.89.232]
+
+TASK [location : Installing postresql and imagemagick] *************************
+changed: [54.183.89.232] => (item=[u'postgresql', u'postgresql-contrib', u'php5-imagick', u'imagemagick'])
+
+TASK [location : Installing ruby 2.3.0 with Rbenv] *****************************
+changed: [54.183.89.232]
+
+TASK [location : Installing gems] **********************************************
+changed: [54.183.89.232]
+
+TASK [location : Moving script for bundle install] *****************************
+changed: [54.183.89.232]
+
+TASK [location : Executing gem_install.sh] *************************************
+fatal: [54.183.89.232]: FAILED! => {"changed": false, "failed": true, "module_stderr": "", "module_stdout": "sudo: unable to resolve host ip-172-3-5-215\r\n\r\n\u0007\r\r\nBroadcast message from root@ip-172-3-5-215\r\r\n\t(unknown) at 17:14 ...\r\r\n\r\r\n\rThe system is going down for power off NOW!\r\r\n", "msg": "MODULE FAILURE", "parsed": false}
+
+NO MORE HOSTS LEFT *************************************************************
+	to retry, use: --limit @location-service.retry
+
+PLAY RECAP *********************************************************************
+54.183.89.232              : ok=12   changed=10   unreachable=0    failed=1   
+
